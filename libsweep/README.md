@@ -5,6 +5,7 @@ Low-level Scanse Sweep LiDAR library. Comes as C99 library `sweep.h` with option
 
 
 ### Quick Start
+#### Linux
 
 ```bash
 mkdir -p build
@@ -22,6 +23,9 @@ cmake .. -DCMAKE_BUILD_TYPE=Release -DDUMMY=On
 ```
 
 This dummy library is API and ABI compatible. Once your device arrives switch out the `libsweep.so` shared library and you're good to go.
+
+
+#### Windows
 
 For Windows users open a command prompt with administrative access:
 
@@ -58,15 +62,46 @@ You may have to restart the computer before the changes take effect.
 
 Lastly, if you are on windows you will have to adjust the settings for the COM port you are using in order to communicate properly with the sweep sensor. Follow [this guide](https://support.scanse.io/hc/en-us/articles/115000793208-Changing-the-USB-Adapter-Latency-Timer-and-Byte-Size-Setting-on-Windows). Adjusting settings only has to be done once for a given COM port, and windows will remember the settings.
 
+
+#### FreeBSD
+
+On FreeBSD, using `pkg(8)` is the easiest and fastest way to get libsweep on your machine:
+
+```sh
+# Requires ports-mgmt/pkg and security/sudo to be pre-installed.
+# Or, just issue these commands as root without sudo (NOT recommended!)
+sudo pkg update
+sudo pkg install libsweep-lidar
+```
+
+In case you prefer to build everything from the source or do not have the actual device yet, building from `ports(7)` tree is another way:
+
+```sh
+# Requires security/sudo to be pre-installed.
+# Or, just issue these commands as root without sudo (NOT recommended!)
+sudo portsnap auto
+cd /usr/ports/misc/libsweep-lidar
+sudo make config # Enable NO_DEVICE build option if you don't have the actual device yet.
+sudo make install clean
+```
+
+
 ### Usage
 
 - Include `<sweep/sweep.h>` for the C interface or `<sweep/sweep.hpp>` for the C++ interface.
 - Link `libsweep.so` with `-lsweep`.
+- On FreeBSD, be sure to specify library and header location: `-I/usr/local/include -L/usr/local/lib`
 
 For example:
 
-    gcc -Wall -Wextra -pedantic -std=c99 examples/example.c -lsweep
-    g++ -Wall -Wextra -pedantic -std=c++11 examples/example.cc -lsweep
+```sh
+# Linux
+gcc -Wall -Wextra -pedantic -std=c99 examples/example.c -lsweep
+g++ -Wall -Wextra -pedantic -std=c++11 examples/example.cc -lsweep
+# FreeBSD
+cc -Weverything -std=c99 -I/usr/local/include -L/usr/local/lib -lsweep examples/example.c
+c++ -Weverything -std=c++11 -I/usr/local/include -L/usr/local/lib -lsweep examples/example.cc
+```
 
 In addition, we provide CMake integration. In your `CMakeLists.txt`:
 
